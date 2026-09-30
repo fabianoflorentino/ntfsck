@@ -1,0 +1,71 @@
+# ntfsck
+
+> Read-only-first NTFS consistency checker and repairer for Linux.
+
+## Overview
+
+ntfsck inspects an NTFS volume through a hexagonally-architected Go codebase: a
+pure on-disk decoder (`internal/ntfs`), a small core that resolves the `$mft`
+extent and checks metadata consistency (`internal/volume`, `internal/check`,
+`internal/repair`, `internal/report`), and adapters for a real device and for
+in-memory test fixtures. It diagnoses and plans repairs but does not yet apply
+them.
+
+## Quick Start
+
+```bash
+git clone https://github.com/fabianoflorentino/ntfsck.git
+cd ntfsck
+make build
+bin/ntfsck --check /dev/sdb1
+```
+
+## Key Concepts
+
+- **$mft extent**: resolved from MFT record 0's non-resident `$DATA` runlist, not
+  from the boot sector's `$mft` zone cluster.
+- **Ports at the consumer**: `volume.Source`, `check.Volume`, and `repair.Volume`
+  are declared where they are used, not beside their implementations.
+- **Read-only first**: `--check` opens read-only; `--repair` prints a plan and
+  writes nothing.
+- **NotCovered is separate**: structures a build does not examine never affect the
+  consistency verdict.
+
+## CLI
+
+- `ntfsck --check [--output text|json] <device>`
+- `ntfsck --repair [--dry-run] <device>`
+- `ntfsck --dump-mft [--mft-record N] <device>`
+
+Exit codes: `0` OK, `1` failure, `2` usage, `3` inconsistent.
+
+## Core Types
+
+- `ntfs.BootSector` / `ntfs.RecordHeader` / `ntfs.Attribute` — decoded on-disk
+  structures.
+- `ntfs.Run` — one decoded runlist entry; `ntfs.ClusterAt`, `ntfs.ClusterCount`.
+- `volume.Volume` — an open volume with `MFTRecordBytes`, `RecordCount`, `ReadAt`.
+- `check.Report`, `check.Finding`, `check.Severity` — the check outcome.
+- `repair.Plan`, `repair.Action` — an ordered set of intended writes.
+- `report.Format` — `text` or `json`.
+
+## Error Handling
+
+- `ntfs.ErrNotNTFS`, `ntfs.ErrBadRecordMagic`, `ntfs.ErrAttributeNotFound`,
+  `ntfs.ErrNoRuns`
+- `volume.ErrRecordOutOfRange`, `volume.ErrNoMFTExtent`
+- `check.ErrUnreadableStructure`
+- `repair.ErrNothingToRepair`, `repair.ErrNotImplemented`
+- `device.ErrReadOnly`
+
+Match with `errors.Is`.
+
+## References
+
+- Documentation index: docs/README.md
+- Architecture: docs/architecture.md
+- How it works: docs/how-it-works.md
+- CLI reference: docs/reference/cli.md
+- On-disk formats: docs/reference/on-disk-formats.md
+- Repository: https://github.com/fabianoflorentino/ntfsck
+- Issues: https://github.com/fabianoflorentino/ntfsck/issues
