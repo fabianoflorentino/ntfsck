@@ -1,0 +1,44 @@
+# Binaries
+bin/
+dist/
+/ntfsck
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binaries
+*.test
+
+# Coverage
+*.out
+coverage.out
+coverage.html
+
+# Dependencies
+vendor/
+
+# Workspace
+go.work
+go.work.sum
+
+# Editors and OS
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# NTFS images produced by the test suite
+*.ntfs
+*.img
+
+# Source specification, kept local
+ntfsck_projeto_reparador_ntfs_linux.pdf

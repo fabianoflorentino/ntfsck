@@ -1,0 +1,57 @@
+# Linter baseline for ntfsck. Groups follow intent; see the golang-lint skill.
+version: "2"
+
+run:
+  timeout: 5m
+
+formatters:
+  enable:
+    - gofmt
+    - goimports
+  settings:
+    goimports:
+      local-prefixes:
+        - github.com/fabianoflorentino/ntfsck
+
+linters:
+  enable:
+    # correctness
+    - govet
+    - staticcheck
+    - errcheck
+    - nilerr
+    - ineffassign
+    - unused
+    # style
+    - revive
+    - misspell
+    - predeclared
+    # complexity
+    - gocritic
+    # concurrency and tests
+    - thelper
+    - paralleltest
+    # security: ntfsck writes to raw block devices, so gosec is not optional
+    - gosec
+    # misc
+    - nolintlint
+  settings:
+    nolintlint:
+      require-specific: true
+      require-explanation: true
+    revive:
+      confidence: 0.8
+    gosec:
+      excludes:
+        # ntfsck parses a binary format in which signed and unsigned views of
+        # the same field are both required (runlist deltas, signed run-length
+        # encodings). Wrapping is the format's semantics, not an overflow bug,
+        # so G115 would have to be silenced at every field it touches.
+        - G115
+  exclusions:
+    rules:
+      # Test fixtures build deliberately malformed on-disk structures.
+      - path: _test\.go$
+        linters:
+          - gosec
+    generated: lax
