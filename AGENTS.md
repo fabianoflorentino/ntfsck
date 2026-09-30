@@ -29,6 +29,18 @@ ntfsck is a read-only-first NTFS consistency checker and repairer for Linux, a G
 - `NotCovered` in a report is kept separate from findings so an unimplemented check cannot turn a healthy volume into an inconsistent one.
 - Exit codes: `0` OK, `1` failure, `2` usage, `3` inconsistent volume.
 
+## Documentation
+
+- `README.md` — front page: install, usage, features, exit codes.
+- `docs/README.md` — documentation index (Diátaxis).
+- `docs/architecture.md` — hexagonal structure and dependency graph.
+- `docs/how-it-works.md` — end-to-end run and flowcharts.
+- `docs/reference/` — CLI flags, exit codes, JSON fields, on-disk offsets.
+- `docs/how-to/` — validate a volume, add a check.
+- `docs/adr/` — architecture decision records.
+- `llms.txt` — condensed context for LLM tooling.
+- Update the relevant page when behavior changes; docs are part of the change.
+
 ## Commands
 
 - Build: `make build` (writes `bin/ntfsck`).
